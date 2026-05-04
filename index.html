@@ -7,44 +7,73 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F7F6F2;
-    --surface: #FFFFFF;
-    --surface2: #F0EEE8;
-    --border: #E2DED4;
-    --border2: #CBC7BB;
-    --text: #1A1916;
-    --text2: #6B6860;
-    --text3: #9B998F;
+    --bg: #F7F6F2; --surface: #FFFFFF; --surface2: #F0EEE8;
+    --border: #E2DED4; --border2: #CBC7BB;
+    --text: #1A1916; --text2: #6B6860; --text3: #9B998F;
     --cjm-bg: #EEEDFE; --cjm-text: #3C3489; --cjm-border: #AFA9EC; --cjm-acc: #534AB7;
     --ph-bg: #E1F5EE;  --ph-text: #085041;  --ph-border: #5DCAA5;  --ph-acc: #0F6E56;
     --da-bg: #FAEEDA;  --da-text: #633806;  --da-border: #EF9F27;  --da-acc: #854F0B;
     --ra-bg: #FAECE7;  --ra-text: #712B13;  --ra-border: #F0997B;  --ra-acc: #993C1D;
-    --todo-bg: #F1EFE8;  --todo-text: #444441;
-    --prog-bg: #E6F1FB;  --prog-text: #0C447C;
+    --todo-bg: #F1EFE8; --todo-text: #444441;
+    --prog-bg: #E6F1FB; --prog-text: #0C447C;
     --block-bg: #FCEBEB; --block-text: #791F1F;
-    --done-bg: #EAF3DE;  --done-text: #27500A;
-    --radius: 10px;
-    --radius-sm: 6px;
+    --done-bg: #EAF3DE; --done-text: #27500A;
+    --radius: 10px; --radius-sm: 6px;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
 
+  /* ── LOCK SCREEN ── */
+  .lock-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
+  .lock-card { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 2.5rem 2rem; width: 100%; max-width: 380px; text-align: center; }
+  .lock-icon { width: 44px; height: 44px; background: var(--surface2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
+  .lock-icon svg { width: 20px; height: 20px; color: var(--text2); }
+  .lock-card h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .lock-card p { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.5; }
+  .lock-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; font-family: 'DM Mono', monospace; outline: none; margin-bottom: 10px; color: var(--text); background: var(--surface); }
+  .lock-input:focus { border-color: var(--text); }
+  .lock-input.error { border-color: #E24B4A; }
+  .lock-btn { width: 100%; padding: 10px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity .15s; }
+  .lock-btn:hover { opacity: .85; }
+  .lock-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .lock-err { font-size: 12px; color: #A32D2D; margin-bottom: 10px; display: none; }
+  .lock-err.show { display: block; }
+
+  /* ── HEADER ── */
   .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 50; }
   .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
   .logo { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.3px; display: flex; align-items: center; gap: 8px; }
   .logo-dot { width: 8px; height: 8px; background: var(--cjm-acc); border-radius: 50%; }
+  .header-right { display: flex; align-items: center; gap: 10px; }
   .sync-indicator { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
   .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); }
   .sync-dot.live { background: #3B6D11; animation: pulse 2s infinite; }
   .sync-dot.saving { background: #854F0B; }
   .sync-dot.error { background: #A32D2D; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .share-btn { display: flex; align-items: center; gap: 6px; padding: 7px 13px; background: var(--surface); color: var(--text2); border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .share-btn:hover { background: var(--surface2); color: var(--text); }
+  .share-btn svg { width: 13px; height: 13px; }
   .add-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity .15s; }
   .add-btn:hover { opacity: .85; }
   .add-btn svg { width: 13px; height: 13px; }
 
-  .main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+  /* ── SHARE MODAL ── */
+  .share-modal { background: var(--surface); border-radius: var(--radius); padding: 1.75rem; width: 100%; max-width: 480px; border: 1px solid var(--border2); }
+  .share-modal h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .share-modal p { font-size: 13px; color: var(--text2); margin-bottom: 1.25rem; line-height: 1.5; }
+  .share-link-box { display: flex; gap: 8px; margin-bottom: 1rem; }
+  .share-link-input { flex: 1; padding: 9px 11px; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text2); background: var(--surface2); outline: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .copy-btn { padding: 9px 14px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: opacity .15s; }
+  .copy-btn:hover { opacity: .85; }
+  .copy-btn.copied { background: #3B6D11; }
+  .share-note { font-size: 12px; color: var(--text3); background: var(--surface2); border-radius: var(--radius-sm); padding: 10px 12px; line-height: 1.6; margin-bottom: 1.25rem; }
+  .share-close { width: 100%; padding: 9px; background: none; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; color: var(--text2); cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .share-close:hover { background: var(--surface2); }
 
+  /* ── MAIN ── */
+  .main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 2rem; }
   .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
   .stat-n { font-size: 26px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
@@ -60,9 +89,9 @@
   .cat-tab.active.ra  { border-color: var(--ra-acc);  background: var(--ra-bg);  }
   .cat-tab-dot { width: 8px; height: 8px; border-radius: 50%; margin-bottom: 10px; }
   .cjm .cat-tab-dot { background: var(--cjm-acc); }
-  .ph  .cat-tab-dot { background: var(--ph-acc); }
-  .da  .cat-tab-dot { background: var(--da-acc); }
-  .ra  .cat-tab-dot { background: var(--ra-acc); }
+  .ph  .cat-tab-dot  { background: var(--ph-acc);  }
+  .da  .cat-tab-dot  { background: var(--da-acc);  }
+  .ra  .cat-tab-dot  { background: var(--ra-acc);  }
   .cat-tab-name { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.3; margin-bottom: 6px; }
   .cat-tab-count { font-size: 20px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -1px; }
   .cjm .cat-tab-count { color: var(--cjm-acc); }
@@ -88,9 +117,10 @@
   .chip.progress { background: var(--prog-bg);  color: var(--prog-text);  cursor: pointer; }
   .chip.blocked  { background: var(--block-bg); color: var(--block-text); cursor: pointer; }
   .chip.done     { background: var(--done-bg);  color: var(--done-text);  cursor: pointer; }
-  .chip.date     { background: var(--surface2); color: var(--text2); }
-  .chip.owner    { background: var(--surface2); color: var(--text2); }
-  .chip.warn     { background: var(--block-bg); color: var(--block-text); }
+  .chip.date  { background: var(--surface2); color: var(--text2); }
+  .chip.owner { background: var(--surface2); color: var(--text2); }
+  .chip.creator { background: var(--surface2); color: var(--text2); }
+  .chip.warn  { background: var(--block-bg); color: var(--block-text); }
   .chevron { color: var(--text3); font-size: 11px; margin-top: 3px; flex-shrink: 0; transition: transform .15s; }
   .chevron.open { transform: rotate(180deg); }
 
@@ -146,59 +176,79 @@
     .form-row { grid-template-columns: 1fr; }
     .detail-grid { grid-template-columns: 1fr; }
     .header { padding: 0 1rem; }
+    .share-btn span { display: none; }
   }
 </style>
 </head>
 <body>
 
-<header class="header">
-  <div class="header-inner">
-    <div class="logo">
-      <div class="logo-dot"></div>
-      Digital CS Dashboard
+<!-- Lock Screen -->
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-icon">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="4" y="9" width="12" height="10" rx="2"/>
+        <path d="M7 9V6a3 3 0 0 1 6 0v3"/>
+      </svg>
     </div>
-    <div style="display:flex;align-items:center;gap:14px">
-      <div class="sync-indicator">
-        <div class="sync-dot" id="sync-dot"></div>
-        <span id="sync-label">Connecting…</span>
+    <h2>Digital CS Dashboard</h2>
+    <p>This dashboard is private. Enter your access token or open the link you were shared.</p>
+    <div class="lock-err" id="lock-err">Invalid token. Please check and try again.</div>
+    <input class="lock-input" id="token-input" type="text" placeholder="Paste your access token…" autocomplete="off" spellcheck="false">
+    <button class="lock-btn" id="lock-btn" onclick="submitToken()">Access Dashboard</button>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="app" style="display:none">
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-dot"></div>
+        Digital CS Dashboard
       </div>
-      <button class="add-btn" onclick="openAdd()">
-        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
-        Add task
-      </button>
+      <div class="header-right">
+        <div class="sync-indicator">
+          <div class="sync-dot" id="sync-dot"></div>
+          <span id="sync-label">Connecting…</span>
+        </div>
+        <button class="share-btn" onclick="openShare()">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="2.5" r="1.5"/><circle cx="11" cy="11.5" r="1.5"/><circle cx="2.5" cy="7" r="1.5"/><line x1="4" y1="7" x2="9.5" y2="3.2"/><line x1="4" y1="7" x2="9.5" y2="10.8"/></svg>
+          <span>Share</span>
+        </button>
+        <button class="add-btn" onclick="openAdd()">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+          Add task
+        </button>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<main class="main">
-  <div class="err-banner" id="err-banner">
-    ⚠ Could not connect to the database. Make sure the Supabase table exists and RLS policies allow public access.
-  </div>
-
-  <div class="stats">
-    <div class="stat"><div class="stat-n" id="s-total">—</div><div class="stat-l">Total tasks</div></div>
-    <div class="stat"><div class="stat-n" id="s-prog" style="color:#185FA5">—</div><div class="stat-l">In progress</div></div>
-    <div class="stat"><div class="stat-n" id="s-block" style="color:#A32D2D">—</div><div class="stat-l">Blocked</div></div>
-    <div class="stat"><div class="stat-n" id="s-done" style="color:#3B6D11">—</div><div class="stat-l">Done</div></div>
-  </div>
-
-  <div class="cat-tabs" id="cat-tabs"></div>
-  <div class="sub-tabs" id="sub-tabs"></div>
-  <div id="task-list">
-    <div class="loading-skeletons">
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
+  <main class="main">
+    <div class="err-banner" id="err-banner">⚠ Could not connect to the database. Check your Supabase configuration.</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-n" id="s-total">—</div><div class="stat-l">Total tasks</div></div>
+      <div class="stat"><div class="stat-n" id="s-prog" style="color:#185FA5">—</div><div class="stat-l">In progress</div></div>
+      <div class="stat"><div class="stat-n" id="s-block" style="color:#A32D2D">—</div><div class="stat-l">Blocked</div></div>
+      <div class="stat"><div class="stat-n" id="s-done" style="color:#3B6D11">—</div><div class="stat-l">Done</div></div>
     </div>
-  </div>
-</main>
+    <div class="cat-tabs" id="cat-tabs"></div>
+    <div class="sub-tabs" id="sub-tabs"></div>
+    <div id="task-list">
+      <div class="loading-skeletons">
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+      </div>
+    </div>
+  </main>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
 const SUPABASE_URL = 'https://tzbjxpdqucyohxmvhahx.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6Ymp4cGRxdWN5b2h4bXZoYWh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODE4MTUsImV4cCI6MjA5MzQ1NzgxNX0.rt52dl221d5K_wKUQIYK2ftqcj6Ur9Y2IRrBr8A6bUA';
-const TABLE = 'tasks';
+const TABLE  = 'tasks';
+const TOKENS = 'access_tokens';
 
 const CATS = [
   { id:'cjm', label:'Customer Journey Maps',  cls:'cjm' },
@@ -206,24 +256,22 @@ const CATS = [
   { id:'da',  label:'Data / Amplitude',       cls:'da'  },
   { id:'ra',  label:'Renewal Automations',    cls:'ra'  }
 ];
-
 const STATUSES = [
   { id:'todo',     label:'To do'       },
   { id:'progress', label:'In progress' },
   { id:'blocked',  label:'Blocked'     },
   { id:'done',     label:'Done'        }
 ];
-
 const STATUS_NEXT = { todo:'progress', progress:'blocked', blocked:'done', done:'todo' };
 
 let tasks = [];
-let activeTab = 'cjm';
+let activeTab    = 'cjm';
 let activeStatus = 'all';
-let expandedId = null;
-let editingId = null;
+let expandedId   = null;
+let editingId    = null;
+let currentToken = null;
 
-// ── Supabase REST helpers ─────────────────────────────────────────────────────
-const BASE_HEADERS = {
+const H = {
   'apikey': SUPABASE_KEY,
   'Authorization': `Bearer ${SUPABASE_KEY}`,
   'Content-Type': 'application/json',
@@ -232,26 +280,97 @@ const BASE_HEADERS = {
 
 async function db(path, opts = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...opts,
-    headers: { ...BASE_HEADERS, ...(opts.headers || {}) }
+    ...opts, headers: { ...H, ...(opts.headers||{}) }
   });
   if (!res.ok) throw new Error(await res.text());
   const txt = await res.text();
   return txt ? JSON.parse(txt) : null;
 }
 
-// ── DB operations ─────────────────────────────────────────────────────────────
+async function validateToken(token) {
+  try {
+    const rows = await db(`${TOKENS}?token=eq.${encodeURIComponent(token)}&select=token`);
+    return rows && rows.length > 0;
+  } catch(e) { return false; }
+}
+
+async function submitToken() {
+  const input = document.getElementById('token-input');
+  const btn   = document.getElementById('lock-btn');
+  const err   = document.getElementById('lock-err');
+  const token = input.value.trim();
+  if (!token) { input.classList.add('error'); return; }
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  err.classList.remove('show');
+  input.classList.remove('error');
+  const valid = await validateToken(token);
+  if (valid) {
+    currentToken = token;
+    sessionStorage.setItem('cs_token', token);
+    unlock();
+  } else {
+    err.classList.add('show');
+    input.classList.add('error');
+    btn.disabled = false;
+    btn.textContent = 'Access Dashboard';
+  }
+}
+
+function unlock() {
+  document.getElementById('lock-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadTasks();
+}
+
+document.getElementById('token-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitToken();
+});
+
+function openShare() {
+  document.getElementById('modal-overlay')?.remove();
+  const url = `${location.origin}${location.pathname}?token=${currentToken}`;
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.id = 'modal-overlay';
+  overlay.onclick = e => { if (e.target===overlay) closeModal(); };
+  overlay.innerHTML = `<div class="share-modal">
+    <h2>Share dashboard</h2>
+    <p>Send this link to teammates. Anyone with it can view and add tasks.</p>
+    <div class="share-link-box">
+      <input class="share-link-input" id="share-url" value="${url}" readonly>
+      <button class="copy-btn" id="copy-btn" onclick="copyLink()">Copy link</button>
+    </div>
+    <div class="share-note">
+      🔒 This link contains your access token. Only share it with people you trust.<br>
+      The token grants full access to view, add, edit and delete tasks.
+    </div>
+    <button class="share-close" onclick="closeModal()">Done</button>
+  </div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('share-url').select(), 50);
+}
+
+function copyLink() {
+  const url = document.getElementById('share-url').value;
+  const btn = document.getElementById('copy-btn');
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy link'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
 async function loadTasks() {
   setSyncState('saving', 'Loading…');
   try {
     const rows = await db(`${TABLE}?order=created_at.desc`);
-    tasks = (rows || []).map(fromRow);
+    tasks = (rows||[]).map(fromRow);
     setSyncState('live', 'Live');
     document.getElementById('err-banner').classList.remove('show');
   } catch(e) {
     setSyncState('error', 'Error');
     document.getElementById('err-banner').classList.add('show');
-    console.error(e);
   }
   render();
 }
@@ -260,7 +379,7 @@ async function insertTask(task) {
   setSyncState('saving', 'Saving…');
   try {
     const result = await db(TABLE, { method:'POST', body: JSON.stringify(toRow(task)) });
-    const saved = Array.isArray(result) ? result[0] : result;
+    const saved  = Array.isArray(result) ? result[0] : result;
     tasks.unshift(fromRow(saved));
     setSyncState('live', 'Live');
     toast('Task added ✓');
@@ -268,7 +387,6 @@ async function insertTask(task) {
   } catch(e) {
     setSyncState('error', 'Error');
     toast('Failed to save task', true);
-    console.error(e);
   }
 }
 
@@ -276,7 +394,7 @@ async function updateTask(id, changes) {
   setSyncState('saving', 'Saving…');
   try {
     await db(`${TABLE}?id=eq.${id}`, { method:'PATCH', body: JSON.stringify(toRow(changes)) });
-    const idx = tasks.findIndex(t => t.id === id);
+    const idx = tasks.findIndex(t=>t.id===id);
     if (idx > -1) tasks[idx] = { ...tasks[idx], ...changes };
     setSyncState('live', 'Live');
     toast('Updated ✓');
@@ -284,7 +402,6 @@ async function updateTask(id, changes) {
   } catch(e) {
     setSyncState('error', 'Error');
     toast('Failed to update', true);
-    console.error(e);
   }
 }
 
@@ -292,19 +409,17 @@ async function deleteTask(id) {
   setSyncState('saving', 'Saving…');
   try {
     await db(`${TABLE}?id=eq.${id}`, { method:'DELETE' });
-    tasks = tasks.filter(t => t.id !== id);
-    if (expandedId === id) expandedId = null;
+    tasks = tasks.filter(t=>t.id!==id);
+    if (expandedId===id) expandedId = null;
     setSyncState('live', 'Live');
     toast('Deleted');
     render();
   } catch(e) {
     setSyncState('error', 'Error');
     toast('Failed to delete', true);
-    console.error(e);
   }
 }
 
-// snake_case ↔ camelCase
 function toRow(t) {
   const r = {};
   if (t.id          != null) r.id          = t.id;
@@ -316,6 +431,7 @@ function toRow(t) {
   if (t.dueDate     != null) r.due_date    = t.dueDate     || null;
   if (t.owners      != null) r.owners      = t.owners      || null;
   if (t.blocker     != null) r.blocker     = t.blocker     || null;
+  if (t.createdBy   != null) r.created_by  = t.createdBy   || null;
   if (t.createdAt   != null) r.created_at  = t.createdAt;
   return r;
 }
@@ -331,24 +447,18 @@ function fromRow(r) {
     dueDate:     r.due_date    || '',
     owners:      r.owners      || '',
     blocker:     r.blocker     || '',
+    createdBy:   r.created_by  || '',
     createdAt:   r.created_at
   };
 }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
-
-function setSyncState(state, label) {
-  document.getElementById('sync-dot').className = `sync-dot ${state}`;
-  document.getElementById('sync-label').textContent = label;
+function setSyncState(s, l) {
+  document.getElementById('sync-dot').className = `sync-dot ${s}`;
+  document.getElementById('sync-label').textContent = l;
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
-function render() {
-  renderStats();
-  renderCatTabs();
-  renderSubTabs();
-  renderTaskList();
-}
+function render() { renderStats(); renderCatTabs(); renderSubTabs(); renderTaskList(); }
 
 function renderStats() {
   document.getElementById('s-total').textContent = tasks.length;
@@ -359,7 +469,7 @@ function renderStats() {
 
 function renderCatTabs() {
   document.getElementById('cat-tabs').innerHTML = CATS.map(c => {
-    const count = tasks.filter(t => t.category === c.id).length;
+    const count = tasks.filter(t=>t.category===c.id).length;
     return `<div class="cat-tab ${c.cls}${activeTab===c.id?' active':''}" onclick="setTab('${c.id}')">
       <div class="cat-tab-dot"></div>
       <div class="cat-tab-name">${c.label}</div>
@@ -369,10 +479,10 @@ function renderCatTabs() {
 }
 
 function renderSubTabs() {
-  const catTasks = tasks.filter(t => t.category === activeTab);
-  const all = [{ id:'all', label:'All' }, ...STATUSES];
+  const ct = tasks.filter(t=>t.category===activeTab);
+  const all = [{id:'all',label:'All'}, ...STATUSES];
   document.getElementById('sub-tabs').innerHTML = all.map(s => {
-    const count = s.id === 'all' ? catTasks.length : catTasks.filter(t=>t.status===s.id).length;
+    const count = s.id==='all' ? ct.length : ct.filter(t=>t.status===s.id).length;
     return `<button class="sub-tab${activeStatus===s.id?' active':''}" onclick="setStatus('${s.id}')">
       ${s.label}<span class="cnt">${count}</span>
     </button>`;
@@ -381,9 +491,8 @@ function renderSubTabs() {
 
 function renderTaskList() {
   const el = document.getElementById('task-list');
-  let list = tasks.filter(t => t.category === activeTab);
-  if (activeStatus !== 'all') list = list.filter(t => t.status === activeStatus);
-
+  let list = tasks.filter(t=>t.category===activeTab);
+  if (activeStatus !== 'all') list = list.filter(t=>t.status===activeStatus);
   if (!list.length) {
     el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><p>No tasks here yet — add one to get started.</p></div>`;
     return;
@@ -392,19 +501,19 @@ function renderTaskList() {
 }
 
 function taskHTML(t) {
-  const st = STATUSES.find(s=>s.id===t.status) || STATUSES[0];
-  const exp = expandedId === t.id;
+  const st = STATUSES.find(s=>s.id===t.status)||STATUSES[0];
+  const exp = expandedId===t.id;
   const hasBlocker = t.blocker && t.blocker.trim();
-
   return `<div class="task-card${exp?' expanded':''}" id="tc-${t.id}">
     <div class="task-head" onclick="toggleExpand('${t.id}')">
       <div style="flex:1">
         <div class="task-title">${esc(t.title)}</div>
         <div class="task-chips">
           <span class="chip ${t.status}" onclick="cycleStatus(event,'${t.id}')" title="Click to cycle status">${st.label}</span>
-          ${t.dueDate  ? `<span class="chip date">📅 ${t.dueDate}</span>` : ''}
-          ${t.owners   ? `<span class="chip owner">👤 ${esc(t.owners)}</span>` : ''}
-          ${hasBlocker ? `<span class="chip warn">⚠ Blocked</span>` : ''}
+          ${t.dueDate   ? `<span class="chip date">📅 ${t.dueDate}</span>` : ''}
+          ${t.owners    ? `<span class="chip owner">👤 ${esc(t.owners)}</span>` : ''}
+          ${t.createdBy ? `<span class="chip creator">✍ ${esc(t.createdBy)}</span>` : ''}
+          ${hasBlocker  ? `<span class="chip warn">⚠ Blocked</span>` : ''}
         </div>
       </div>
       <div class="chevron${exp?' open':''}">▾</div>
@@ -415,6 +524,7 @@ function taskHTML(t) {
         ${t.timeline    ? `<div class="detail-field"><div class="detail-label">Timeline</div><div class="detail-val">${esc(t.timeline)}</div></div>` : ''}
         ${t.dueDate     ? `<div class="detail-field"><div class="detail-label">Due date</div><div class="detail-val">${t.dueDate}</div></div>` : ''}
         ${t.owners      ? `<div class="detail-field detail-full"><div class="detail-label">Co-owners</div><div class="detail-val">${esc(t.owners)}</div></div>` : ''}
+        ${t.createdBy   ? `<div class="detail-field"><div class="detail-label">Created by</div><div class="detail-val">${esc(t.createdBy)}</div></div>` : ''}
         ${hasBlocker    ? `<div class="detail-field detail-full"><div class="detail-label">Blocker</div><div class="blocker-box">${esc(t.blocker)}</div></div>` : ''}
       </div>
       <div class="task-actions">
@@ -427,18 +537,15 @@ function taskHTML(t) {
 
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ── Interactions ──────────────────────────────────────────────────────────────
-function setTab(id)       { activeTab = id; activeStatus = 'all'; render(); }
-function setStatus(id)    { activeStatus = id; renderSubTabs(); renderTaskList(); }
-function toggleExpand(id) { expandedId = expandedId===id ? null : id; renderTaskList(); }
+function setTab(id)       { activeTab=id; activeStatus='all'; render(); }
+function setStatus(id)    { activeStatus=id; renderSubTabs(); renderTaskList(); }
+function toggleExpand(id) { expandedId=expandedId===id?null:id; renderTaskList(); }
 
 async function cycleStatus(e, id) {
   e.stopPropagation();
-  const t = tasks.find(x=>x.id===id);
-  if (!t) return;
-  const next = STATUS_NEXT[t.status] || 'todo';
-  t.status = next; // optimistic
-  render();
+  const t = tasks.find(x=>x.id===id); if (!t) return;
+  const next = STATUS_NEXT[t.status]||'todo';
+  t.status = next; render();
   await updateTask(id, { status: next });
 }
 
@@ -447,10 +554,9 @@ async function confirmDelete(id) {
   await deleteTask(id);
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
 function openAdd() {
   editingId = null;
-  showModal({ title:'', category:activeTab, status:'todo', description:'', timeline:'', dueDate:'', owners:'', blocker:'' });
+  showModal({ title:'', category:activeTab, status:'todo', description:'', timeline:'', dueDate:'', owners:'', blocker:'', createdBy:'' });
 }
 
 function openEdit(id) {
@@ -465,7 +571,6 @@ function showModal(d) {
   overlay.className = 'overlay';
   overlay.id = 'modal-overlay';
   overlay.onclick = e => { if (e.target===overlay) closeModal(); };
-
   overlay.innerHTML = `<div class="modal">
     <h2>${editingId ? 'Edit task' : 'New task'}</h2>
     <div class="form-field">
@@ -486,6 +591,16 @@ function showModal(d) {
         </select>
       </div>
     </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Created by *</label>
+        <input id="f-createdby" placeholder="Your name" value="${esc(d.createdBy)}">
+      </div>
+      <div class="form-field">
+        <label>Co-owners</label>
+        <input id="f-owners" placeholder="e.g. Sarah, Mike" value="${esc(d.owners)}">
+      </div>
+    </div>
     <div class="form-field">
       <label>Description</label>
       <textarea id="f-desc" placeholder="Add context, goals, or notes...">${esc(d.description)}</textarea>
@@ -501,10 +616,6 @@ function showModal(d) {
       </div>
     </div>
     <div class="form-field">
-      <label>Co-owners</label>
-      <input id="f-owners" placeholder="e.g. Sarah, Mike" value="${esc(d.owners)}">
-    </div>
-    <div class="form-field">
       <label>Blocker</label>
       <textarea id="f-blocker" placeholder="Describe any blockers or dependencies..." style="min-height:60px">${esc(d.blocker)}</textarea>
     </div>
@@ -513,7 +624,6 @@ function showModal(d) {
       <button class="btn-save" id="btn-save" onclick="saveTask()">Save task</button>
     </div>
   </div>`;
-
   document.body.appendChild(overlay);
   setTimeout(() => document.getElementById('f-title').focus(), 50);
 }
@@ -526,11 +636,8 @@ function closeModal() {
 async function saveTask() {
   const title = document.getElementById('f-title').value.trim();
   if (!title) { document.getElementById('f-title').focus(); return; }
-
   const btn = document.getElementById('btn-save');
-  btn.disabled = true;
-  btn.textContent = 'Saving…';
-
+  btn.disabled = true; btn.textContent = 'Saving…';
   const data = {
     title,
     category:    document.getElementById('f-cat').value,
@@ -539,36 +646,55 @@ async function saveTask() {
     timeline:    document.getElementById('f-timeline').value.trim(),
     dueDate:     document.getElementById('f-due').value,
     owners:      document.getElementById('f-owners').value.trim(),
-    blocker:     document.getElementById('f-blocker').value.trim()
+    blocker:     document.getElementById('f-blocker').value.trim(),
+    createdBy:   document.getElementById('f-createdby').value.trim()
   };
-
   const wasEditing = editingId;
   closeModal();
-
   if (wasEditing) {
     await updateTask(wasEditing, data);
   } else {
     activeTab = data.category;
-    await insertTask({ id: uid(), ...data, createdAt: new Date().toISOString() });
+    await insertTask({ id:uid(), ...data, createdAt: new Date().toISOString() });
   }
 }
 
-function toast(msg, isErr = false) {
+function toast(msg, isErr=false) {
   const el = document.getElementById('toast');
   el.textContent = msg;
-  el.className = `toast${isErr ? ' err' : ''}`;
+  el.className = `toast${isErr?' err':''}`;
   el.classList.add('show');
   setTimeout(() => el.classList.remove('show'), 2400);
 }
 
-// ── Init + polling ────────────────────────────────────────────────────────────
-loadTasks();
+const urlParams = new URLSearchParams(location.search);
+const urlToken  = urlParams.get('token');
+const sessToken = sessionStorage.getItem('cs_token');
 
-// Refresh every 30s so teammates' changes appear
+if (urlToken) {
+  (async () => {
+    const valid = await validateToken(urlToken);
+    if (valid) {
+      currentToken = urlToken;
+      sessionStorage.setItem('cs_token', urlToken);
+      unlock();
+    } else {
+      document.getElementById('lock-err').classList.add('show');
+      document.getElementById('lock-err').textContent = 'The link you followed contains an invalid token.';
+    }
+  })();
+} else if (sessToken) {
+  (async () => {
+    const valid = await validateToken(sessToken);
+    if (valid) { currentToken = sessToken; unlock(); }
+  })();
+}
+
 setInterval(async () => {
+  if (!currentToken) return;
   try {
     const rows = await db(`${TABLE}?order=created_at.desc`);
-    tasks = (rows || []).map(fromRow);
+    tasks = (rows||[]).map(fromRow);
     render();
   } catch(e) {}
 }, 30000);
