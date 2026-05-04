@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital CS Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F2;
+    --surface: #FFFFFF;
+    --surface2: #F0EEE8;
+    --border: #E2DED4;
+    --border2: #CBC7BB;
+    --text: #1A1916;
+    --text2: #6B6860;
+    --text3: #9B998F;
+    --cjm-bg: #EEEDFE; --cjm-text: #3C3489; --cjm-border: #AFA9EC; --cjm-acc: #534AB7;
+    --ph-bg: #E1F5EE;  --ph-text: #085041;  --ph-border: #5DCAA5;  --ph-acc: #0F6E56;
+    --da-bg: #FAEEDA;  --da-text: #633806;  --da-border: #EF9F27;  --da-acc: #854F0B;
+    --ra-bg: #FAECE7;  --ra-text: #712B13;  --ra-border: #F0997B;  --ra-acc: #993C1D;
+    --todo-bg: #F1EFE8;  --todo-text: #444441;
+    --prog-bg: #E6F1FB;  --prog-text: #0C447C;
+    --block-bg: #FCEBEB; --block-text: #791F1F;
+    --done-bg: #EAF3DE;  --done-text: #27500A;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; }
+
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 50; }
+  .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .logo { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.3px; display: flex; align-items: center; gap: 8px; }
+  .logo-dot { width: 8px; height: 8px; background: var(--cjm-acc); border-radius: 50%; }
+  .sync-indicator { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); }
+  .sync-dot.live { background: #3B6D11; animation: pulse 2s infinite; }
+  .sync-dot.saving { background: #854F0B; }
+  .sync-dot.error { background: #A32D2D; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .add-btn { display: flex; align-items: center; gap: 6px; padding: 7px 14px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity .15s; }
+  .add-btn:hover { opacity: .85; }
+  .add-btn svg { width: 13px; height: 13px; }
+
+  .main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 2rem; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+  .stat-n { font-size: 26px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -1px; line-height: 1; margin-bottom: 4px; }
+  .stat-l { font-size: 12px; color: var(--text2); }
+
+  .cat-tabs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+  .cat-tab { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: all .15s; text-align: left; font-family: 'DM Sans', sans-serif; }
+  .cat-tab:hover { border-color: var(--border2); }
+  .cat-tab.active { border-width: 2px; }
+  .cat-tab.active.cjm { border-color: var(--cjm-acc); background: var(--cjm-bg); }
+  .cat-tab.active.ph  { border-color: var(--ph-acc);  background: var(--ph-bg);  }
+  .cat-tab.active.da  { border-color: var(--da-acc);  background: var(--da-bg);  }
+  .cat-tab.active.ra  { border-color: var(--ra-acc);  background: var(--ra-bg);  }
+  .cat-tab-dot { width: 8px; height: 8px; border-radius: 50%; margin-bottom: 10px; }
+  .cjm .cat-tab-dot { background: var(--cjm-acc); }
+  .ph  .cat-tab-dot { background: var(--ph-acc); }
+  .da  .cat-tab-dot { background: var(--da-acc); }
+  .ra  .cat-tab-dot { background: var(--ra-acc); }
+  .cat-tab-name { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.3; margin-bottom: 6px; }
+  .cat-tab-count { font-size: 20px; font-weight: 600; font-family: 'DM Mono', monospace; letter-spacing: -1px; }
+  .cjm .cat-tab-count { color: var(--cjm-acc); }
+  .ph  .cat-tab-count { color: var(--ph-acc);  }
+  .da  .cat-tab-count { color: var(--da-acc);  }
+  .ra  .cat-tab-count { color: var(--ra-acc);  }
+
+  .sub-tabs { display: flex; gap: 4px; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+  .sub-tab { padding: 8px 14px; font-size: 13px; cursor: pointer; border: none; background: none; color: var(--text2); font-family: 'DM Sans', sans-serif; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+  .sub-tab:hover { color: var(--text); }
+  .sub-tab.active { color: var(--text); font-weight: 500; border-bottom-color: var(--text); }
+  .sub-tab .cnt { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; border-radius: 9px; background: var(--surface2); font-size: 11px; margin-left: 5px; padding: 0 5px; font-family: 'DM Mono', monospace; }
+
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+  .task-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color .15s; }
+  .task-card:hover { border-color: var(--border2); }
+  .task-card.expanded { border-color: var(--border2); }
+  .task-head { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; cursor: pointer; }
+  .task-title { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.4; }
+  .task-chips { display: flex; align-items: center; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .chip { font-size: 11px; padding: 3px 8px; border-radius: 12px; font-weight: 500; white-space: nowrap; }
+  .chip.todo     { background: var(--todo-bg);  color: var(--todo-text);  cursor: pointer; }
+  .chip.progress { background: var(--prog-bg);  color: var(--prog-text);  cursor: pointer; }
+  .chip.blocked  { background: var(--block-bg); color: var(--block-text); cursor: pointer; }
+  .chip.done     { background: var(--done-bg);  color: var(--done-text);  cursor: pointer; }
+  .chip.date     { background: var(--surface2); color: var(--text2); }
+  .chip.owner    { background: var(--surface2); color: var(--text2); }
+  .chip.warn     { background: var(--block-bg); color: var(--block-text); }
+  .chevron { color: var(--text3); font-size: 11px; margin-top: 3px; flex-shrink: 0; transition: transform .15s; }
+  .chevron.open { transform: rotate(180deg); }
+
+  .task-body { display: none; padding: 0 16px 14px; border-top: 1px solid var(--border); }
+  .task-body.open { display: block; padding-top: 14px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .detail-full { grid-column: 1 / -1; }
+  .detail-field { display: flex; flex-direction: column; gap: 4px; }
+  .detail-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: .06em; }
+  .detail-val { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .blocker-box { background: var(--block-bg); color: var(--block-text); border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13px; line-height: 1.5; }
+  .task-actions { display: flex; gap: 8px; }
+  .btn-edit { padding: 5px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border2); background: none; color: var(--text2); font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .btn-edit:hover { background: var(--surface2); color: var(--text); }
+  .btn-del { padding: 5px 12px; border-radius: var(--radius-sm); border: 1px solid var(--ra-border); background: none; color: var(--ra-text); font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .btn-del:hover { background: var(--ra-bg); }
+
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text2); }
+  .empty-icon { font-size: 28px; margin-bottom: 10px; }
+  .empty p { font-size: 14px; }
+
+  .loading-skeletons { display: flex; flex-direction: column; gap: 6px; }
+  .skeleton { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); height: 72px; position: relative; overflow: hidden; }
+  .skeleton::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 0%, var(--surface2) 50%, transparent 100%); animation: shimmer 1.4s infinite; }
+  @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 1rem; }
+  .modal { background: var(--surface); border-radius: var(--radius); padding: 1.75rem; width: 100%; max-width: 520px; max-height: 90vh; overflow-y: auto; border: 1px solid var(--border2); }
+  .modal h2 { font-size: 16px; font-weight: 600; margin-bottom: 1.5rem; color: var(--text); }
+  .form-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+  .form-field label { font-size: 12px; color: var(--text2); font-weight: 500; }
+  .form-field input, .form-field select, .form-field textarea { padding: 9px 11px; border: 1px solid var(--border2); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-size: 13px; font-family: 'DM Sans', sans-serif; transition: border-color .15s; outline: none; }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--text); }
+  .form-field textarea { resize: vertical; min-height: 72px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.5rem; }
+  .btn-save { padding: 9px 20px; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity .15s; }
+  .btn-save:hover { opacity: .85; }
+  .btn-save:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-cancel { padding: 9px 16px; background: none; border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text2); font-size: 13px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  .btn-cancel:hover { background: var(--surface2); }
+
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; z-index: 300; opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; pointer-events: none; }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.err { background: #A32D2D; }
+
+  .err-banner { background: var(--block-bg); color: var(--block-text); border-radius: var(--radius); padding: 12px 16px; margin-bottom: 1rem; font-size: 13px; border: 1px solid var(--ra-border); display: none; }
+  .err-banner.show { display: block; }
+
+  @media (max-width: 700px) {
+    .main { padding: 1rem; }
+    .stats, .cat-tabs { grid-template-columns: repeat(2, 1fr); }
+    .form-row { grid-template-columns: 1fr; }
+    .detail-grid { grid-template-columns: 1fr; }
+    .header { padding: 0 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      Digital CS Dashboard
+    </div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <div class="sync-indicator">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-label">Connecting…</span>
+      </div>
+      <button class="add-btn" onclick="openAdd()">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+        Add task
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="err-banner" id="err-banner">
+    ⚠ Could not connect to the database. Make sure the Supabase table exists and RLS policies allow public access.
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-n" id="s-total">—</div><div class="stat-l">Total tasks</div></div>
+    <div class="stat"><div class="stat-n" id="s-prog" style="color:#185FA5">—</div><div class="stat-l">In progress</div></div>
+    <div class="stat"><div class="stat-n" id="s-block" style="color:#A32D2D">—</div><div class="stat-l">Blocked</div></div>
+    <div class="stat"><div class="stat-n" id="s-done" style="color:#3B6D11">—</div><div class="stat-l">Done</div></div>
+  </div>
+
+  <div class="cat-tabs" id="cat-tabs"></div>
+  <div class="sub-tabs" id="sub-tabs"></div>
+  <div id="task-list">
+    <div class="loading-skeletons">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://tzbjxpdqucyohxmvhahx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6Ymp4cGRxdWN5b2h4bXZoYWh4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4ODE4MTUsImV4cCI6MjA5MzQ1NzgxNX0.rt52dl221d5K_wKUQIYK2ftqcj6Ur9Y2IRrBr8A6bUA';
+const TABLE = 'tasks';
+
+const CATS = [
+  { id:'cjm', label:'Customer Journey Maps',  cls:'cjm' },
+  { id:'ph',  label:'PlanHat Implementation', cls:'ph'  },
+  { id:'da',  label:'Data / Amplitude',       cls:'da'  },
+  { id:'ra',  label:'Renewal Automations',    cls:'ra'  }
+];
+
+const STATUSES = [
+  { id:'todo',     label:'To do'       },
+  { id:'progress', label:'In progress' },
+  { id:'blocked',  label:'Blocked'     },
+  { id:'done',     label:'Done'        }
+];
+
+const STATUS_NEXT = { todo:'progress', progress:'blocked', blocked:'done', done:'todo' };
+
+let tasks = [];
+let activeTab = 'cjm';
+let activeStatus = 'all';
+let expandedId = null;
+let editingId = null;
+
+// ── Supabase REST helpers ─────────────────────────────────────────────────────
+const BASE_HEADERS = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': `Bearer ${SUPABASE_KEY}`,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+async function db(path, opts = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...opts,
+    headers: { ...BASE_HEADERS, ...(opts.headers || {}) }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : null;
+}
+
+// ── DB operations ─────────────────────────────────────────────────────────────
+async function loadTasks() {
+  setSyncState('saving', 'Loading…');
+  try {
+    const rows = await db(`${TABLE}?order=created_at.desc`);
+    tasks = (rows || []).map(fromRow);
+    setSyncState('live', 'Live');
+    document.getElementById('err-banner').classList.remove('show');
+  } catch(e) {
+    setSyncState('error', 'Error');
+    document.getElementById('err-banner').classList.add('show');
+    console.error(e);
+  }
+  render();
+}
+
+async function insertTask(task) {
+  setSyncState('saving', 'Saving…');
+  try {
+    const result = await db(TABLE, { method:'POST', body: JSON.stringify(toRow(task)) });
+    const saved = Array.isArray(result) ? result[0] : result;
+    tasks.unshift(fromRow(saved));
+    setSyncState('live', 'Live');
+    toast('Task added ✓');
+    render();
+  } catch(e) {
+    setSyncState('error', 'Error');
+    toast('Failed to save task', true);
+    console.error(e);
+  }
+}
+
+async function updateTask(id, changes) {
+  setSyncState('saving', 'Saving…');
+  try {
+    await db(`${TABLE}?id=eq.${id}`, { method:'PATCH', body: JSON.stringify(toRow(changes)) });
+    const idx = tasks.findIndex(t => t.id === id);
+    if (idx > -1) tasks[idx] = { ...tasks[idx], ...changes };
+    setSyncState('live', 'Live');
+    toast('Updated ✓');
+    render();
+  } catch(e) {
+    setSyncState('error', 'Error');
+    toast('Failed to update', true);
+    console.error(e);
+  }
+}
+
+async function deleteTask(id) {
+  setSyncState('saving', 'Saving…');
+  try {
+    await db(`${TABLE}?id=eq.${id}`, { method:'DELETE' });
+    tasks = tasks.filter(t => t.id !== id);
+    if (expandedId === id) expandedId = null;
+    setSyncState('live', 'Live');
+    toast('Deleted');
+    render();
+  } catch(e) {
+    setSyncState('error', 'Error');
+    toast('Failed to delete', true);
+    console.error(e);
+  }
+}
+
+// snake_case ↔ camelCase
+function toRow(t) {
+  const r = {};
+  if (t.id          != null) r.id          = t.id;
+  if (t.title       != null) r.title       = t.title;
+  if (t.category    != null) r.category    = t.category;
+  if (t.status      != null) r.status      = t.status;
+  if (t.description != null) r.description = t.description || null;
+  if (t.timeline    != null) r.timeline    = t.timeline    || null;
+  if (t.dueDate     != null) r.due_date    = t.dueDate     || null;
+  if (t.owners      != null) r.owners      = t.owners      || null;
+  if (t.blocker     != null) r.blocker     = t.blocker     || null;
+  if (t.createdAt   != null) r.created_at  = t.createdAt;
+  return r;
+}
+
+function fromRow(r) {
+  return {
+    id:          r.id,
+    title:       r.title,
+    category:    r.category,
+    status:      r.status,
+    description: r.description || '',
+    timeline:    r.timeline    || '',
+    dueDate:     r.due_date    || '',
+    owners:      r.owners      || '',
+    blocker:     r.blocker     || '',
+    createdAt:   r.created_at
+  };
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function setSyncState(state, label) {
+  document.getElementById('sync-dot').className = `sync-dot ${state}`;
+  document.getElementById('sync-label').textContent = label;
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  renderStats();
+  renderCatTabs();
+  renderSubTabs();
+  renderTaskList();
+}
+
+function renderStats() {
+  document.getElementById('s-total').textContent = tasks.length;
+  document.getElementById('s-prog').textContent  = tasks.filter(t=>t.status==='progress').length;
+  document.getElementById('s-block').textContent = tasks.filter(t=>t.status==='blocked').length;
+  document.getElementById('s-done').textContent  = tasks.filter(t=>t.status==='done').length;
+}
+
+function renderCatTabs() {
+  document.getElementById('cat-tabs').innerHTML = CATS.map(c => {
+    const count = tasks.filter(t => t.category === c.id).length;
+    return `<div class="cat-tab ${c.cls}${activeTab===c.id?' active':''}" onclick="setTab('${c.id}')">
+      <div class="cat-tab-dot"></div>
+      <div class="cat-tab-name">${c.label}</div>
+      <div class="cat-tab-count">${count}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderSubTabs() {
+  const catTasks = tasks.filter(t => t.category === activeTab);
+  const all = [{ id:'all', label:'All' }, ...STATUSES];
+  document.getElementById('sub-tabs').innerHTML = all.map(s => {
+    const count = s.id === 'all' ? catTasks.length : catTasks.filter(t=>t.status===s.id).length;
+    return `<button class="sub-tab${activeStatus===s.id?' active':''}" onclick="setStatus('${s.id}')">
+      ${s.label}<span class="cnt">${count}</span>
+    </button>`;
+  }).join('');
+}
+
+function renderTaskList() {
+  const el = document.getElementById('task-list');
+  let list = tasks.filter(t => t.category === activeTab);
+  if (activeStatus !== 'all') list = list.filter(t => t.status === activeStatus);
+
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><p>No tasks here yet — add one to get started.</p></div>`;
+    return;
+  }
+  el.innerHTML = list.map(taskHTML).join('');
+}
+
+function taskHTML(t) {
+  const st = STATUSES.find(s=>s.id===t.status) || STATUSES[0];
+  const exp = expandedId === t.id;
+  const hasBlocker = t.blocker && t.blocker.trim();
+
+  return `<div class="task-card${exp?' expanded':''}" id="tc-${t.id}">
+    <div class="task-head" onclick="toggleExpand('${t.id}')">
+      <div style="flex:1">
+        <div class="task-title">${esc(t.title)}</div>
+        <div class="task-chips">
+          <span class="chip ${t.status}" onclick="cycleStatus(event,'${t.id}')" title="Click to cycle status">${st.label}</span>
+          ${t.dueDate  ? `<span class="chip date">📅 ${t.dueDate}</span>` : ''}
+          ${t.owners   ? `<span class="chip owner">👤 ${esc(t.owners)}</span>` : ''}
+          ${hasBlocker ? `<span class="chip warn">⚠ Blocked</span>` : ''}
+        </div>
+      </div>
+      <div class="chevron${exp?' open':''}">▾</div>
+    </div>
+    <div class="task-body${exp?' open':''}">
+      <div class="detail-grid">
+        ${t.description ? `<div class="detail-field detail-full"><div class="detail-label">Description</div><div class="detail-val">${esc(t.description)}</div></div>` : ''}
+        ${t.timeline    ? `<div class="detail-field"><div class="detail-label">Timeline</div><div class="detail-val">${esc(t.timeline)}</div></div>` : ''}
+        ${t.dueDate     ? `<div class="detail-field"><div class="detail-label">Due date</div><div class="detail-val">${t.dueDate}</div></div>` : ''}
+        ${t.owners      ? `<div class="detail-field detail-full"><div class="detail-label">Co-owners</div><div class="detail-val">${esc(t.owners)}</div></div>` : ''}
+        ${hasBlocker    ? `<div class="detail-field detail-full"><div class="detail-label">Blocker</div><div class="blocker-box">${esc(t.blocker)}</div></div>` : ''}
+      </div>
+      <div class="task-actions">
+        <button class="btn-edit" onclick="openEdit('${t.id}')">Edit</button>
+        <button class="btn-del"  onclick="confirmDelete('${t.id}')">Delete</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Interactions ──────────────────────────────────────────────────────────────
+function setTab(id)       { activeTab = id; activeStatus = 'all'; render(); }
+function setStatus(id)    { activeStatus = id; renderSubTabs(); renderTaskList(); }
+function toggleExpand(id) { expandedId = expandedId===id ? null : id; renderTaskList(); }
+
+async function cycleStatus(e, id) {
+  e.stopPropagation();
+  const t = tasks.find(x=>x.id===id);
+  if (!t) return;
+  const next = STATUS_NEXT[t.status] || 'todo';
+  t.status = next; // optimistic
+  render();
+  await updateTask(id, { status: next });
+}
+
+async function confirmDelete(id) {
+  if (!confirm('Delete this task?')) return;
+  await deleteTask(id);
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+function openAdd() {
+  editingId = null;
+  showModal({ title:'', category:activeTab, status:'todo', description:'', timeline:'', dueDate:'', owners:'', blocker:'' });
+}
+
+function openEdit(id) {
+  editingId = id;
+  const t = tasks.find(x=>x.id===id);
+  if (t) showModal(t);
+}
+
+function showModal(d) {
+  document.getElementById('modal-overlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.id = 'modal-overlay';
+  overlay.onclick = e => { if (e.target===overlay) closeModal(); };
+
+  overlay.innerHTML = `<div class="modal">
+    <h2>${editingId ? 'Edit task' : 'New task'}</h2>
+    <div class="form-field">
+      <label>Title *</label>
+      <input id="f-title" placeholder="What needs to be done?" value="${esc(d.title)}">
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Category</label>
+        <select id="f-cat">
+          ${CATS.map(c=>`<option value="${c.id}"${d.category===c.id?' selected':''}>${c.label}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Status</label>
+        <select id="f-status">
+          ${STATUSES.map(s=>`<option value="${s.id}"${d.status===s.id?' selected':''}>${s.label}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Description</label>
+      <textarea id="f-desc" placeholder="Add context, goals, or notes...">${esc(d.description)}</textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Timeline</label>
+        <input id="f-timeline" placeholder="e.g. Q2 2026, 2 weeks" value="${esc(d.timeline)}">
+      </div>
+      <div class="form-field">
+        <label>Due date</label>
+        <input id="f-due" type="date" value="${d.dueDate||''}">
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Co-owners</label>
+      <input id="f-owners" placeholder="e.g. Sarah, Mike" value="${esc(d.owners)}">
+    </div>
+    <div class="form-field">
+      <label>Blocker</label>
+      <textarea id="f-blocker" placeholder="Describe any blockers or dependencies..." style="min-height:60px">${esc(d.blocker)}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" id="btn-save" onclick="saveTask()">Save task</button>
+    </div>
+  </div>`;
+
+  document.body.appendChild(overlay);
+  setTimeout(() => document.getElementById('f-title').focus(), 50);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay')?.remove();
+  editingId = null;
+}
+
+async function saveTask() {
+  const title = document.getElementById('f-title').value.trim();
+  if (!title) { document.getElementById('f-title').focus(); return; }
+
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+
+  const data = {
+    title,
+    category:    document.getElementById('f-cat').value,
+    status:      document.getElementById('f-status').value,
+    description: document.getElementById('f-desc').value.trim(),
+    timeline:    document.getElementById('f-timeline').value.trim(),
+    dueDate:     document.getElementById('f-due').value,
+    owners:      document.getElementById('f-owners').value.trim(),
+    blocker:     document.getElementById('f-blocker').value.trim()
+  };
+
+  const wasEditing = editingId;
+  closeModal();
+
+  if (wasEditing) {
+    await updateTask(wasEditing, data);
+  } else {
+    activeTab = data.category;
+    await insertTask({ id: uid(), ...data, createdAt: new Date().toISOString() });
+  }
+}
+
+function toast(msg, isErr = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast${isErr ? ' err' : ''}`;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2400);
+}
+
+// ── Init + polling ────────────────────────────────────────────────────────────
+loadTasks();
+
+// Refresh every 30s so teammates' changes appear
+setInterval(async () => {
+  try {
+    const rows = await db(`${TABLE}?order=created_at.desc`);
+    tasks = (rows || []).map(fromRow);
+    render();
+  } catch(e) {}
+}, 30000);
+</script>
+</body>
+</html>
