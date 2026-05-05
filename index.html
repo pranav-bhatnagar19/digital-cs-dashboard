@@ -26,8 +26,6 @@
   /* ── LOCK SCREEN ── */
   .lock-screen { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
   .lock-card { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius); padding: 2.5rem 2rem; width: 100%; max-width: 380px; text-align: center; }
-  .lock-icon { width: 44px; height: 44px; background: var(--surface2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
-  .lock-icon svg { width: 20px; height: 20px; color: var(--text2); }
   .lock-card h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
   .lock-card p { font-size: 13px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.5; }
   .lock-input { width: 100%; padding: 10px 12px; border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; font-family: 'DM Mono', monospace; outline: none; margin-bottom: 10px; color: var(--text); background: var(--surface); }
@@ -43,7 +41,6 @@
   .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; z-index: 50; }
   .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
   .logo { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.3px; display: flex; align-items: center; gap: 8px; }
-  .logo-dot { width: 8px; height: 8px; background: var(--cjm-acc); border-radius: 50%; }
   .header-right { display: flex; align-items: center; gap: 10px; }
   .sync-indicator { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
   .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); }
@@ -51,7 +48,6 @@
   .sync-dot.saving { background: #854F0B; }
   .sync-dot.error { background: #A32D2D; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
   .share-btn { display: flex; align-items: center; gap: 6px; padding: 7px 13px; background: var(--surface); color: var(--text2); border: 1px solid var(--border2); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s; }
   .share-btn:hover { background: var(--surface2); color: var(--text); }
   .share-btn svg { width: 13px; height: 13px; }
@@ -117,10 +113,10 @@
   .chip.progress { background: var(--prog-bg);  color: var(--prog-text);  cursor: pointer; }
   .chip.blocked  { background: var(--block-bg); color: var(--block-text); cursor: pointer; }
   .chip.done     { background: var(--done-bg);  color: var(--done-text);  cursor: pointer; }
-  .chip.date  { background: var(--surface2); color: var(--text2); }
-  .chip.owner { background: var(--surface2); color: var(--text2); }
+  .chip.date    { background: var(--surface2); color: var(--text2); }
+  .chip.owner   { background: var(--surface2); color: var(--text2); }
   .chip.creator { background: var(--surface2); color: var(--text2); }
-  .chip.warn  { background: var(--block-bg); color: var(--block-text); }
+  .chip.warn    { background: var(--block-bg); color: var(--block-text); }
   .chevron { color: var(--text3); font-size: 11px; margin-top: 3px; flex-shrink: 0; transition: transform .15s; }
   .chevron.open { transform: rotate(180deg); }
 
@@ -185,12 +181,7 @@
 <!-- Lock Screen -->
 <div class="lock-screen" id="lock-screen">
   <div class="lock-card">
-    <div class="lock-icon">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="4" y="9" width="12" height="10" rx="2"/>
-        <path d="M7 9V6a3 3 0 0 1 6 0v3"/>
-      </svg>
-    </div>
+    <img src="smartbear-logo.png" alt="SmartBear" style="height:36px;margin-bottom:1.25rem;">
     <h2>Digital CS Dashboard</h2>
     <p>This dashboard is private. Enter your access token or open the link you were shared.</p>
     <div class="lock-err" id="lock-err">Invalid token. Please check and try again.</div>
@@ -204,7 +195,8 @@
   <header class="header">
     <div class="header-inner">
       <div class="logo">
-        <div class="logo-dot"></div>
+        <img src="smartbear-logo.png" alt="SmartBear" style="height:22px;">
+        <span style="color:var(--border2);font-weight:300;margin:0 4px;">|</span>
         Digital CS Dashboard
       </div>
       <div class="header-right">
